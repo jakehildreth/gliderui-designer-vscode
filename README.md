@@ -7,6 +7,27 @@ by mdgrs-mei (Avalonia UI for PowerShell 7.4+).
 
 Not affiliated with GUI Creator or GliderUI.
 
+## Installation
+
+### From a .vsix file (no marketplace needed)
+
+1. Download the latest `gliderui-designer-vscode-x.y.z.vsix` from [Releases](https://github.com/jakehildreth/gliderui-designer-vscode/releases).
+2. Install it:
+   ```
+   code --install-extension gliderui-designer-vscode-x.y.z.vsix
+   ```
+   or in VS Code: Extensions view → `...` menu → **Install from VSIX...**
+
+### From source
+
+```
+git clone --recurse-submodules https://github.com/jakehildreth/gliderui-designer-vscode
+cd gliderui-designer-vscode
+npm install
+npm run package
+code --install-extension gliderui-designer-vscode-0.1.0.vsix
+```
+
 ## Quick start
 
 1. Open the command palette and run **GliderUI Designer: Open GUI Designer**.

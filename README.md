@@ -2,10 +2,14 @@
 
 Visual designer for cross-platform PowerShell GUIs, inside VS Code. Wraps the
 [GUI Creator](https://github.com/Mynster9361/guiCreatorPowerShell) designer by
-Mynster9361 and generates scripts for [GliderUI](https://github.com/mdgrs-mei/GliderUI)
-by mdgrs-mei (Avalonia UI for PowerShell 7.4+).
+[Mynster9361](https://github.com/Mynster9361) and generates scripts for
+[GliderUI](https://github.com/mdgrs-mei/GliderUI) by mdgrs-mei (Avalonia UI for
+PowerShell 7.4+).
 
-Not affiliated with GUI Creator or GliderUI.
+All design, codegen, and UI credit goes to
+[Mynster9361/guiCreatorPowerShell](https://github.com/Mynster9361/guiCreatorPowerShell) —
+this extension only hosts that designer inside VS Code. Not affiliated with
+GUI Creator or GliderUI.
 
 ## Installation
 

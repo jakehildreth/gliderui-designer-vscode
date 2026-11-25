@@ -1,0 +1,41 @@
+# GliderUI Designer for VS Code
+
+Visual designer for cross-platform PowerShell GUIs, inside VS Code. Wraps the
+[GUI Creator](https://github.com/Mynster9361/guiCreatorPowerShell) designer by
+Mynster9361 and generates scripts for [GliderUI](https://github.com/mdgrs-mei/GliderUI)
+by mdgrs-mei (Avalonia UI for PowerShell 7.4+).
+
+Not affiliated with GUI Creator or GliderUI.
+
+## Quick start
+
+1. Open the command palette and run **GliderUI Designer: Open GUI Designer**.
+2. Drag controls onto the form, set properties, wire events.
+3. **File → Save Project** stores a `.guiproj.json` through VS Code's save dialog;
+   **Export .ps1** writes the runnable script.
+4. Press **F5** to run the design with `pwsh`. Output streams into the designer's
+   Output panel; error lines link back to the script line.
+
+## Requirements
+
+- [PowerShell 7.4+](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) (`pwsh` on PATH).
+- The [GliderUI](https://github.com/mdgrs-mei/GliderUI) module and its server package to run designs.
+  If either is missing, the extension offers to install it for you
+  (`Install-PSResource -Name GliderUI; Install-GLIServer`, run in a visible terminal).
+
+## Layout of this repository
+
+- `designer/` — the upstream GUI Creator, included as a git submodule and used
+  byte-identical. Upstream changes arrive with `git submodule update --remote designer`.
+- `media/host-shim.js` — injected into the webview after upstream's scripts; reroutes
+  the browser seams (runner HTTP API, localStorage, file downloads, `window.open`)
+  to the extension host.
+- `src/extension.ts` — webview host, pwsh process management, GliderUI install prompts.
+
+## License
+
+MIT License w/Commons Clause - see [LICENSE](LICENSE) file for details.
+
+---
+
+Made with 💜 by [Jake Hildreth](https://jakehildreth.com)

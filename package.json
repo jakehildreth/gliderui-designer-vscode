@@ -1,0 +1,59 @@
+{
+  "name": "gliderui-designer-vscode",
+  "displayName": "GliderUI Designer for VS Code",
+  "description": "Visual designer for cross-platform PowerShell GUIs (GliderUI/Avalonia). Wraps the GUI Creator designer by Mynster9361.",
+  "version": "0.1.0",
+  "publisher": "jakehildreth",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jakehildreth/gliderui-designer-vscode.git"
+  },
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "PowerShell",
+    "GliderUI",
+    "GUI",
+    "Avalonia",
+    "form designer"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "glideruiDesigner.open",
+        "title": "Open GUI Designer",
+        "category": "GliderUI Designer"
+      },
+      {
+        "command": "glideruiDesigner.installGliderUI",
+        "title": "Install GliderUI",
+        "category": "GliderUI Designer"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "glideruiDesigner.installGliderUI",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.96.0",
+    "typescript": "^5.7.0"
+  }
+}

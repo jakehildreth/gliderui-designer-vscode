@@ -1,0 +1,3 @@
+[submodule "designer"]
+	path = designer
+	url = https://github.com/Mynster9361/guiCreatorPowerShell.git

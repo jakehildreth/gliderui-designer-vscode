@@ -1,0 +1,78 @@
+name: Release
+
+# Tag push drives everything: the tag is the version (CalVer: vYYYY.M.DHHMM,
+# e.g. v2026.11.251430). The workflow stamps it into package.json, builds the
+# .vsix, and attaches it to a GitHub Release. Marketplace publishing happens
+# only when the VSCE_PAT secret exists.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (must exist, e.g. v2026.11.251430)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with designer submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          ref: ${{ github.event.inputs.tag || github.ref_name }}
+
+      - name: Validate tag is CalVer
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          echo "version=${TAG#v}" >> "$GITHUB_ENV"
+          echo "$TAG" | grep -Eq '^v[0-9]{4}\.[0-9]{1,2}\.[0-9]{5,6}$' || {
+            echo "::error::Tag '$TAG' is not CalVer vYYYY.M.DHHMM"
+            exit 1
+          }
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install and build
+        run: |
+          npm ci
+          npm run compile
+
+      - name: Stamp CalVer version into package.json
+        run: |
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json'));p.version=process.env.VERSION;fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+        env:
+          VERSION: ${{ env.version }}
+
+      - name: Package .vsix
+        run: npx @vscode/vsce package --out gliderui-designer-vscode-${{ env.version }}.vsix
+
+      - name: GitHub Release with .vsix
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: ${{ env.version }}
+          files: gliderui-designer-vscode-${{ env.version }}.vsix
+          prerelease: true
+          generate_release_notes: true
+          body: |
+            Visual designer for cross-platform PowerShell GUIs (GliderUI/Avalonia), wrapping the [GUI Creator](https://github.com/Mynster9361/guiCreatorPowerShell) designer.
+
+            Install: download the .vsix below, then `code --install-extension gliderui-designer-vscode-${{ env.version }}.vsix` or Extensions view → ... → Install from VSIX.
+
+            Requires PowerShell 7.4+ (`pwsh` on PATH) and the [GliderUI](https://github.com/mdgrs-mei/GliderUI) module to run designs (F5).
+
+      - name: Publish to VS Code Marketplace
+        if: env.VSCE_PAT != ''
+        run: npx @vscode/vsce publish -p "$VSCE_PAT" --packagePath gliderui-designer-vscode-${{ env.version }}.vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}

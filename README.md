@@ -41,6 +41,12 @@ code --install-extension gliderui-designer-vscode-0.1.0.vsix
 4. Press **F5** to run the design with `pwsh`. Output streams into the designer's
    Output panel; error lines link back to the script line.
 
+For detailed usage instructions — the toolbox, property grid, anchors, dialogs,
+wizards, the guided tour, and more — see the
+[GUI Creator README](https://github.com/Mynster9361/guiCreatorPowerShell#readme).
+The designer inside VS Code is the same tool; only saving, opening, and running
+go through VS Code instead of the browser.
+
 ## Requirements
 
 - [PowerShell 7.4+](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) (`pwsh` on PATH).

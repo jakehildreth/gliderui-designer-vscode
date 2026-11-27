@@ -155,13 +155,13 @@
       const box = $('#outLines');
       if (box) box.replaceChildren();
     },
-    async run(script) {
+    async run(script, installsGliderUI) {
       state.script = script;
       this.show();
       this.clear();
       const info = state.info || {};
       addLine('sys', `Running with PowerShell ${info.pwsh || '?'}${info.gliderui ? ', GliderUI ' + info.gliderui : ''} ...`);
-      if (!info.gliderui) addLine('err', 'GliderUI is not installed. Run: Install-PSResource -Name GliderUI; Install-GLIServer');
+      if (!info.ready) addLine(installsGliderUI ? 'sys' : 'err', installsGliderUI ? 'GliderUI or its server is missing; the script installs it for the current user first (this can take a minute).' : (info.problem || 'GliderUI is not ready.'));
       state.running = true;
       setStatus('Running...', 'run');
       send({ type: 'run', script });

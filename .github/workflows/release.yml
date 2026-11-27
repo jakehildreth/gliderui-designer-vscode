@@ -70,7 +70,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.version }}
-          name: ${{ env.prerelease == 'true' && format('{0} (latest build from main)', env.version) || env.version }}
+          name: ${{ env.version }}
           files: gliderui-designer-vscode-${{ env.version }}.vsix
           prerelease: ${{ env.prerelease }}
           generate_release_notes: ${{ env.prerelease != 'true' }}

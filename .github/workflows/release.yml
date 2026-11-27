@@ -1,10 +1,11 @@
 name: Release
 
 # Tag push drives a full release: the tag is the version (CalVer: vYYYY.M.DHHMM,
-# e.g. v2026.11.251430). A push to main instead refreshes one rolling prerelease
-# (tag vYYYY.M.DHHMM-pre, recreated each push). Both stamp the version into
-# package.json, build the .vsix, and attach it to a GitHub Release. Marketplace
-# publishing happens only for full releases and only when VSCE_PAT exists.
+# e.g. v2026.11.251430). A push to main instead creates a prerelease tagged
+# vYYYY.M.DHHMM-pre; prereleases accumulate until a full release deletes them.
+# Both stamp the version into package.json, build the .vsix, and attach it to a
+# GitHub Release. Marketplace publishing happens only for full releases and only
+# when VSCE_PAT exists.
 on:
   push:
     branches:
@@ -79,6 +80,16 @@ jobs:
             Install: download the .vsix below, then `code --install-extension gliderui-designer-vscode-${{ env.version }}.vsix` or Extensions view → ... → Install from VSIX.
 
             Requires PowerShell 7.4+ (`pwsh` on PATH) and the [GliderUI](https://github.com/mdgrs-mei/GliderUI) module to run designs (F5).
+
+      - name: Delete accumulated prereleases on full release
+        if: env.prerelease != 'true'
+        run: |
+          gh release list --json tagName,isPrerelease --jq '.[] | select(.isPrerelease) | .tagName' \
+            | while read -r tag; do
+                gh release delete "$tag" --yes --cleanup-tag
+              done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to VS Code Marketplace
         if: env.VSCE_PAT != '' && env.prerelease != 'true'

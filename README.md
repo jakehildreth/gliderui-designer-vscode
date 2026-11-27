@@ -15,10 +15,12 @@ GUI Creator or GliderUI.
 
 ### From a .vsix file (no marketplace needed)
 
-1. Download the latest `gliderui-designer-vscode-x.y.z.vsix` from [Releases](https://github.com/jakehildreth/gliderui-designer-vscode/releases).
+1. Download the `.vsix` from [Releases](https://github.com/jakehildreth/gliderui-designer-vscode/releases):
+   - **Stable:** the release marked **Latest** (tagged `vYYYY.M.DHHMM`).
+   - **Bleeding edge:** the release marked **Pre-release** — rebuilt on every push to `main` (tagged `vYYYY.M.DHHMM-pre`).
 2. Install it:
    ```
-   code --install-extension gliderui-designer-vscode-x.y.z.vsix
+   code --install-extension gliderui-designer-vscode-<version>.vsix
    ```
    or in VS Code: Extensions view → `...` menu → **Install from VSIX...**
 
@@ -49,10 +51,8 @@ go through VS Code instead of the browser.
 
 ## Requirements
 
-- [PowerShell 7.4+](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) (`pwsh` on PATH).
-- The [GliderUI](https://github.com/mdgrs-mei/GliderUI) module and its server package to run designs.
-  If either is missing, the extension offers to install it for you
-  (`Install-PSResource -Name GliderUI; Install-GLIServer`, run in a visible terminal).
+- [PowerShell 7.4+](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) (`pwsh` on PATH). This is the only hard requirement — the extension tells you if it's missing.
+- The [GliderUI](https://github.com/mdgrs-mei/GliderUI) module and its server package, needed to run designs. Generated scripts install both for the current user on first run (default `InstallIfMissing` behavior), so you don't need to install anything up front. To install manually instead: `Install-PSResource -Name GliderUI; Install-GLIServer`.
 
 ## Layout of this repository
 
@@ -61,7 +61,7 @@ go through VS Code instead of the browser.
 - `media/host-shim.js` — injected into the webview after upstream's scripts; reroutes
   the browser seams (runner HTTP API, localStorage, file downloads, `window.open`)
   to the extension host.
-- `src/extension.ts` — webview host, pwsh process management, GliderUI install prompts.
+- `src/extension.ts` — webview host, pwsh process management, GliderUI readiness checks.
 
 ## License
 

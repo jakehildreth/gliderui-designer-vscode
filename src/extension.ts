@@ -214,13 +214,10 @@ $s = if ($m) { Get-Module -ListAvailable -Name 'GliderUI.Server.*' | Where-Objec
   return info;
 }
 
+/** Only missing pwsh is a hard blocker — a missing GliderUI self-heals on F5 (InstallIfMissing). */
 function offerInstall(info: RunnerInfo): void {
-  const detail = info.gliderui ? 'Install-GLIServer' : 'Install-PSResource -Name GliderUI; Install-GLIServer';
-  void vscode.window
-    .showInformationMessage(`${info.problem} The designer can run it for you (${detail}).`, 'Install GliderUI', 'Not now')
-    .then((choice) => {
-      if (choice === 'Install GliderUI') installGliderUI();
-    });
+  if (info.pwsh) return;
+  void vscode.window.showErrorMessage(info.problem ?? 'PowerShell 7 (pwsh) was not found on PATH. Install it first.');
 }
 
 /** Installs GliderUI (and its server) in a visible terminal so the user sees prompts. */

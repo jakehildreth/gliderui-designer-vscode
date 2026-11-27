@@ -62,7 +62,7 @@ jobs:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           name: ${{ env.version }}
           files: gliderui-designer-vscode-${{ env.version }}.vsix
-          prerelease: true
+          prerelease: false
           generate_release_notes: true
           body: |
             Visual designer for cross-platform PowerShell GUIs (GliderUI/Avalonia), wrapping the [GUI Creator](https://github.com/Mynster9361/guiCreatorPowerShell) designer.

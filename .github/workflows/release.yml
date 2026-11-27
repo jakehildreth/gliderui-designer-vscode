@@ -1,11 +1,14 @@
 name: Release
 
-# Tag push drives everything: the tag is the version (CalVer: vYYYY.M.DHHMM,
-# e.g. v2026.11.251430). The workflow stamps it into package.json, builds the
-# .vsix, and attaches it to a GitHub Release. Marketplace publishing happens
-# only when the VSCE_PAT secret exists.
+# Tag push drives a full release: the tag is the version (CalVer: vYYYY.M.DHHMM,
+# e.g. v2026.11.251430). A push to main instead refreshes one rolling prerelease
+# (tag vYYYY.M.DHHMM-pre, recreated each push). Both stamp the version into
+# package.json, build the .vsix, and attach it to a GitHub Release. Marketplace
+# publishing happens only for full releases and only when VSCE_PAT exists.
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -27,14 +30,20 @@ jobs:
           submodules: true
           ref: ${{ github.event.inputs.tag || github.ref_name }}
 
-      - name: Validate tag is CalVer
+      - name: Resolve version
         run: |
-          TAG="${{ github.event.inputs.tag || github.ref_name }}"
-          echo "version=${TAG#v}" >> "$GITHUB_ENV"
-          echo "$TAG" | grep -Eq '^v[0-9]{4}\.[0-9]{1,2}\.[0-9]{5,6}$' || {
-            echo "::error::Tag '$TAG' is not CalVer vYYYY.M.DHHMM"
-            exit 1
-          }
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "version=$(date -u +%Y.%-m.%d%H%M)-pre" >> "$GITHUB_ENV"
+            echo "prerelease=true" >> "$GITHUB_ENV"
+          else
+            TAG="${{ github.event.inputs.tag || github.ref_name }}"
+            echo "version=${TAG#v}" >> "$GITHUB_ENV"
+            echo "prerelease=false" >> "$GITHUB_ENV"
+            echo "$TAG" | grep -Eq '^v[0-9]{4}\.[0-9]{1,2}\.[0-9]{5,6}$' || {
+              echo "::error::Tag '$TAG' is not CalVer vYYYY.M.DHHMM"
+              exit 1
+            }
+          fi
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -59,11 +68,11 @@ jobs:
       - name: GitHub Release with .vsix
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
-          name: ${{ env.version }}
+          tag_name: v${{ env.version }}
+          name: ${{ env.prerelease == 'true' && format('{0} (latest build from main)', env.version) || env.version }}
           files: gliderui-designer-vscode-${{ env.version }}.vsix
-          prerelease: false
-          generate_release_notes: true
+          prerelease: ${{ env.prerelease }}
+          generate_release_notes: ${{ env.prerelease != 'true' }}
           body: |
             Visual designer for cross-platform PowerShell GUIs (GliderUI/Avalonia), wrapping the [GUI Creator](https://github.com/Mynster9361/guiCreatorPowerShell) designer.
 
@@ -72,7 +81,7 @@ jobs:
             Requires PowerShell 7.4+ (`pwsh` on PATH) and the [GliderUI](https://github.com/mdgrs-mei/GliderUI) module to run designs (F5).
 
       - name: Publish to VS Code Marketplace
-        if: env.VSCE_PAT != ''
+        if: env.VSCE_PAT != '' && env.prerelease != 'true'
         run: npx @vscode/vsce publish -p "$VSCE_PAT" --packagePath gliderui-designer-vscode-${{ env.version }}.vsix
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}

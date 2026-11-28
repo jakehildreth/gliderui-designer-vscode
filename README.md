@@ -31,7 +31,7 @@ git clone --recurse-submodules https://github.com/jakehildreth/gliderui-designer
 cd gliderui-designer-vscode
 npm install
 npm run package
-code --install-extension gliderui-designer-vscode-0.1.0.vsix
+code --install-extension gliderui-designer-vscode-*.vsix
 ```
 
 ## Quick start

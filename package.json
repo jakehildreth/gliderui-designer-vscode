@@ -2,7 +2,7 @@
   "name": "gliderui-designer-vscode",
   "displayName": "GliderUI Designer for VS Code",
   "description": "Visual designer for cross-platform PowerShell GUIs (GliderUI/Avalonia). Wraps the GUI Creator designer by Mynster9361.",
-  "version": "0.1.0",
+  "version": "2026.11.281200",
   "publisher": "jakehildreth",
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
@@ -24,7 +24,31 @@
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
+  "icon": "icon.png",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gliderui-designer",
+          "title": "GliderUI Designer",
+          "icon": "media/gliderui.png"
+        }
+      ]
+    },
+    "views": {
+      "gliderui-designer": [
+        {
+          "id": "glideruiDesigner.home",
+          "name": "GliderUI Designer"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "glideruiDesigner.home",
+        "contents": "Design cross-platform PowerShell GUIs visually.\n[Open GUI Designer](command:glideruiDesigner.open)\n[Install GliderUI](command:glideruiDesigner.installGliderUI)"
+      }
+    ],
     "commands": [
       {
         "command": "glideruiDesigner.open",
